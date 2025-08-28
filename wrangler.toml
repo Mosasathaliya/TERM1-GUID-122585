@@ -1,0 +1,158 @@
+name = "al-dalil-ai-worker"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[ai]
+binding = "AI"
+
+# AI Models Configuration
+[[ai.models]]
+name = "@cf/meta/llama-2-7b-chat-int8"
+
+[[ai.models]]
+name = "@cf/meta/m2m100-1.2b"
+
+[[ai.models]]
+name = "@cf/myshell-ai/melotts"
+
+[[ai.models]]
+name = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+
+[[ai.models]]
+name = "@cf/bytedance/stable-diffusion-xl-lightning"
+
+[[ai.models]]
+name = "@cf/lykon/dreamshaper-8-lcm"
+
+[[ai.models]]
+name = "@cf/llava-hf/llava-1.5-7b-hf"
+
+[[ai.models]]
+name = "@cf/facebook/bart-large-cnn"
+
+[[ai.models]]
+name = "@cf/runwayml/stable-diffusion-v1-5-inpainting"
+
+[[ai.models]]
+name = "@cf/black-forest-labs/flux-1-schnell"
+
+[[ai.models]]
+name = "@cf/openai/gpt-oss-120b"
+
+[[ai.models]]
+name = "@cf/meta/llama-guard-3-8b"
+
+[[ai.models]]
+name = "@cf/mistralai/mistral-7b-instruct-v0.1"
+
+[[ai.models]]
+name = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+
+[[ai.models]]
+name = "@cf/qwen/qwen2.5-coder-32b-instruct"
+
+[[ai.models]]
+name = "@cf/qwen/qwq-32b"
+
+[[ai.models]]
+name = "@cf/google/gemma-3-12b-it"
+
+[[ai.models]]
+name = "@cf/meta/llama-3.2-11b-vision-instruct"
+
+[[ai.models]]
+name = "@cf/baai/bge-small-en-v1.5"
+
+[[ai.models]]
+name = "@cf/baai/bge-base-en-v1.5"
+
+[[ai.models]]
+name = "@cf/baai/bge-large-en-v1.5"
+
+[[ai.models]]
+name = "@cf/baai/bge-m3"
+
+[[ai.models]]
+name = "@cf/unum/uform-gen2-qwen-500m"
+
+[env.production]
+name = "al-dalil-ai-worker"
+vars = { ENVIRONMENT = "production" }
+
+[env.production.ai]
+binding = "AI"
+
+# AI Models Configuration for Production
+[[env.production.ai.models]]
+name = "@cf/meta/llama-2-7b-chat-int8"
+
+[[env.production.ai.models]]
+name = "@cf/meta/m2m100-1.2b"
+
+[[env.production.ai.models]]
+name = "@cf/myshell-ai/melotts"
+
+[[env.production.ai.models]]
+name = "@cf/stabilityai/stable-diffusion-xl-base-1.0"
+
+[[env.production.ai.models]]
+name = "@cf/bytedance/stable-diffusion-xl-lightning"
+
+[[env.production.ai.models]]
+name = "@cf/lykon/dreamshaper-8-lcm"
+
+[[env.production.ai.models]]
+name = "@cf/llava-hf/llava-1.5-7b-hf"
+
+[[env.production.ai.models]]
+name = "@cf/facebook/bart-large-cnn"
+
+[[env.production.ai.models]]
+name = "@cf/runwayml/stable-diffusion-v1-5-inpainting"
+
+[[env.production.ai.models]]
+name = "@cf/black-forest-labs/flux-1-schnell"
+
+[[env.production.ai.models]]
+name = "@cf/openai/gpt-oss-120b"
+
+[[env.production.ai.models]]
+name = "@cf/meta/llama-guard-3-8b"
+
+[[env.production.ai.models]]
+name = "@cf/mistralai/mistral-7b-instruct-v0.1"
+
+[[env.production.ai.models]]
+name = "@cf/meta/llama-3.3-70b-instruct-fp8-fast"
+
+[[env.production.ai.models]]
+name = "@cf/qwen/qwen2.5-coder-32b-instruct"
+
+[[env.production.ai.models]]
+name = "@cf/qwen/qwq-32b"
+
+[[env.production.ai.models]]
+name = "@cf/google/gemma-3-12b-it"
+
+[[env.production.ai.models]]
+name = "@cf/meta/llama-3.2-11b-vision-instruct"
+
+[[env.production.ai.models]]
+name = "@cf/baai/bge-small-en-v1.5"
+
+[[env.production.ai.models]]
+name = "@cf/baai/bge-base-en-v1.5"
+
+[[env.production.ai.models]]
+name = "@cf/baai/bge-large-en-v1.5"
+
+[[env.production.ai.models]]
+name = "@cf/baai/bge-m3"
+
+[[env.production.ai.models]]
+name = "@cf/unum/uform-gen2-qwen-500m"
+
+# Cloudflare Pages configuration
+[pages]
+project_name = "al-dalil-guide"
+pages_build_output_dir = "out"

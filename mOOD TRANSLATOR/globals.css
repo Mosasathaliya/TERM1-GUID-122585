@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 10% 98%; /* Default light background */
+    --foreground: 220 10% 10%; /* Default light foreground */
+    --card: 220 10% 98%;
+    --card-foreground: 220 10% 10%;
+    --popover: 220 10% 98%;
+    --popover-foreground: 220 10% 10%;
+    --primary: 220 90% 50%; /* Default primary */
+    --primary-foreground: 220 10% 98%;
+    --secondary: 220 10% 94%;
+    --secondary-foreground: 220 10% 10%;
+    --muted: 220 10% 94%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 220 10% 90%;
+    --accent-foreground: 220 10% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 88%;
+    --input: 220 10% 88%;
+    --ring: 220 90% 50%;
+    --radius: 0.5rem;
+
+    /* Happy theme variables */
+    --happy-background: 120 30% 20%; /* Dark green */
+    --happy-foreground: 120 70% 90%; /* Light green text */
+    --happy-primary: 120 70% 75%; /* Light green (e.g., #90EE90) */
+    --happy-primary-foreground: 120 30% 10%; /* Darker green text on primary */
+    --happy-accent: 60 100% 50%; /* Gold accent for happy (#FFD700) */
+    --happy-card-background: 120 30% 25%; /* Slightly lighter dark green */
+    --happy-border: 120 50% 50%; /* Mid-green border */
+
+    /* Angry theme variables */
+    --angry-background: 0 0% 10%; /* Dark gray */
+    --angry-foreground: 0 0% 85%; /* Light gray text */
+    --angry-primary: 0 100% 60%; /* Red (#ff4444) */
+    --angry-primary-foreground: 0 0% 98%; /* White text on primary */
+    --angry-accent: 120 70% 80%; /* Light green accent for angry (#90ffa9) */
+    --angry-card-background: 0 0% 15%; /* Slightly lighter dark gray */
+    --angry-border: 0 80% 40%; /* Darker red border */
+
+    /* Sad theme variables */
+    --sad-background: 240 10% 15%; /* Dark blue */
+    --sad-foreground: 240 20% 80%; /* Light gray-blue text */
+    --sad-primary: 220 80% 70%; /* Muted light blue */
+    --sad-primary-foreground: 240 10% 10%; /* Dark blue text on primary */
+    --sad-accent: 260 50% 60%; /* Muted purple accent */
+    --sad-card-background: 240 10% 20%;
+    --sad-border: 220 50% 50%;
+
+    /* Excited theme variables */
+    --excited-background: 30 100% 15%; /* Dark orange */
+    --excited-foreground: 30 100% 90%; /* Light orange text */
+    --excited-primary: 45 100% 60%; /* Bright yellow */
+    --excited-primary-foreground: 30 100% 10%; /* Dark orange text */
+    --excited-accent: 330 100% 60%; /* Hot pink accent */
+    --excited-card-background: 30 100% 20%;
+    --excited-border: 45 80% 50%;
+
+    /* Motivated theme variables */
+    --motivated-background: 210 50% 20%; /* Deep blue */
+    --motivated-foreground: 210 50% 95%; /* Almost white text */
+    --motivated-primary: 180 100% 45%; /* Cyan / Aqua */
+    --motivated-primary-foreground: 210 50% 10%; /* Dark blue text */
+    --motivated-accent: 0 0% 100%; /* White accent */
+    --motivated-card-background: 210 50% 25%;
+    --motivated-border: 180 80% 40%;
+
+    /* Fonts */
+    --font-en: "Times New Roman", Times, serif;
+    --font-ar: Arial, Helvetica, sans-serif;
+  }
+
+  .dark {
+    /* Keep dark theme consistent for now, can be adjusted if needed */
+    --background: 220 10% 10%;
+    --foreground: 220 10% 90%;
+    --card: 220 10% 10%;
+    --card-foreground: 220 10% 90%;
+    --popover: 220 10% 10%;
+    --popover-foreground: 220 10% 90%;
+    --primary: 220 90% 60%;
+    --primary-foreground: 220 10% 10%;
+    --secondary: 220 10% 15%;
+    --secondary-foreground: 220 10% 90%;
+    --muted: 220 10% 15%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 220 10% 20%;
+    --accent-foreground: 220 10% 90%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 10% 25%;
+    --input: 220 10% 25%;
+    --ring: 220 90% 60%;
+  }
+
+  /* Apply theme variables based on data attribute */
+  body[data-theme='happy'] {
+    --background: var(--happy-background);
+    --foreground: var(--happy-foreground);
+    --primary: var(--happy-primary);
+    --primary-foreground: var(--happy-primary-foreground);
+    --accent: var(--happy-accent);
+    --card: var(--happy-card-background);
+    --card-foreground: var(--happy-foreground);
+    --border: var(--happy-border);
+    --input: var(--happy-border);
+    --ring: var(--happy-primary);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  body[data-theme='angry'] {
+    --background: var(--angry-background);
+    --foreground: var(--angry-foreground);
+    --primary: var(--angry-primary);
+    --primary-foreground: var(--angry-primary-foreground);
+    --accent: var(--angry-accent);
+    --card: var(--angry-card-background);
+    --card-foreground: var(--angry-foreground);
+    --border: var(--angry-border);
+    --input: var(--angry-border);
+    --ring: var(--angry-primary);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  body[data-theme='sad'] {
+    --background: var(--sad-background);
+    --foreground: var(--sad-foreground);
+    --primary: var(--sad-primary);
+    --primary-foreground: var(--sad-primary-foreground);
+    --accent: var(--sad-accent);
+    --card: var(--sad-card-background);
+    --card-foreground: var(--sad-foreground);
+    --border: var(--sad-border);
+    --input: var(--sad-border);
+    --ring: var(--sad-primary);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  
+  body[data-theme='excited'] {
+    --background: var(--excited-background);
+    --foreground: var(--excited-foreground);
+    --primary: var(--excited-primary);
+    --primary-foreground: var(--excited-primary-foreground);
+    --accent: var(--excited-accent);
+    --card: var(--excited-card-background);
+    --card-foreground: var(--excited-foreground);
+    --border: var(--excited-border);
+    --input: var(--excited-border);
+    --ring: var(--excited-primary);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  body[data-theme='motivated'] {
+    --background: var(--motivated-background);
+    --foreground: var(--motivated-foreground);
+    --primary: var(--motivated-primary);
+    --primary-foreground: var(--motivated-primary-foreground);
+    --accent: var(--motivated-accent);
+    --card: var(--motivated-card-background);
+    --card-foreground: var(--motivated-foreground);
+    --border: var(--motivated-border);
+    --input: var(--motivated-border);
+    --ring: var(--motivated-primary);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  body[dir='ltr'] {
+    font-family: var(--font-en);
+  }
+
+  body[dir='rtl'] {
+    font-family: var(--font-ar);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow: hidden; /* Prevent scrollbars due to full screen canvas */
+  }
+}
+
+/* Custom styles for buttons and inputs to use theme variables */
+@layer components {
+  .btn-themed {
+    @apply border-2 border-primary bg-background text-primary hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed;
+    font-family: inherit; /* Inherit font from body */
+  }
+  .input-themed {
+    @apply border-2 border-primary bg-background text-accent caret-accent placeholder:text-muted-foreground focus:ring-2 focus:ring-ring;
+    font-family: inherit; /* Inherit font from body */
+  }
+  .card-themed {
+     @apply bg-card text-card-foreground border-2 border-[hsla(var(--primary)/0.3)] shadow-[0_4px_6px_hsla(var(--primary)/0.2)];
+     background-color: hsl(var(--background)); /* Override ShadCN card background */
+  }
+}

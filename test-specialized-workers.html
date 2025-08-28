@@ -1,0 +1,311 @@
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fixed AI Workers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .test-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success { border-left: 4px solid #4ecdc4; }
+        .error { border-left: 4px solid #ff6b6b; }
+        .image-result img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .audio-result audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            text-align: center;
+            font-size: 18px;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Fixed AI Workers</h1>
+    <div class="status">
+        <strong>Testing the newly deployed and fixed workers:</strong><br>
+        • Image Worker: Fixed to return actual images with proper AI model handling<br>
+        • TTS Worker: Fixed to use REAL Cloudflare TTS models (MeloTTS, Aura-1)<br>
+        • Gateway Worker: Enhanced Arabic content generation
+    </div>
+
+    <div class="test-section">
+        <h2>🖼️ Test Image Generation</h2>
+        <p>Test the fixed image worker that should now return actual PNG images instead of empty objects.</p>
+        <button class="test-button" onclick="testImageGeneration()">Generate Test Image</button>
+        <div id="imageResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔊 Test Text-to-Speech</h2>
+        <p>Test the fixed TTS worker that should now return actual audio URLs instead of null.</p>
+        <button class="test-button" onclick="testTTSGeneration()">Generate TTS Audio</button>
+        <div id="ttsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📚 Test Enhanced Arabic Content</h2>
+        <p>Test the gateway worker with enhanced Arabic content generation.</p>
+        <button class="test-button" onclick="testArabicContent()">Generate Arabic Content</button>
+        <div id="arabicResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔗 Test Worker Status</h2>
+        <p>Check if all workers are responding correctly.</p>
+        <button class="test-button" onclick="testWorkerStatus()">Check All Workers</button>
+        <div id="statusResult" class="result"></div>
+    </div>
+
+    <script>
+        const WORKERS = {
+            image: 'https://image-ai-worker.speedofmastry.workers.dev',
+            tts: 'https://tts-ai-worker.speedofmastry.workers.dev',
+            gateway: 'https://ai-gateway-worker.speedofmastry.workers.dev'
+        };
+
+        async function testImageGeneration() {
+            const resultDiv = document.getElementById('imageResult');
+            resultDiv.innerHTML = '🔄 Generating test image...';
+            resultDiv.className = 'result';
+
+            try {
+                const response = await fetch(WORKERS.image, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: 'simple red apple',
+                        lesson: 'Fruits',
+                        goal: 'Learn fruit names'
+                    })
+                });
+
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && contentType.includes('image/')) {
+                        // We got an actual image!
+                        const blob = await response.blob();
+                        const imageUrl = URL.createObjectURL(blob);
+                        
+                        resultDiv.innerHTML = `
+                            ✅ SUCCESS: Image generated successfully!
+                            📊 Content-Type: ${contentType}
+                            📏 Size: ${(blob.size / 1024).toFixed(2)} KB
+                            🖼️ Image Preview:
+                        `;
+                        
+                        const img = document.createElement('img');
+                        img.src = imageUrl;
+                        img.alt = 'Generated Image';
+                        resultDiv.appendChild(img);
+                        resultDiv.className = 'result success image-result';
+                    } else {
+                        // Got JSON response (might be error)
+                        const data = await response.json();
+                        resultDiv.innerHTML = `❌ Got JSON instead of image: ${JSON.stringify(data, null, 2)}`;
+                        resultDiv.className = 'result error';
+                    }
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `❌ HTTP Error ${response.status}: ${errorText}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testTTSGeneration() {
+            const resultDiv = document.getElementById('ttsResult');
+            resultDiv.innerHTML = '🔄 Generating TTS audio...';
+            resultDiv.className = 'result';
+
+            try {
+                const response = await fetch(WORKERS.tts, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: 'Hello, this is a test of the TTS system.',
+                        lesson: 'Greetings',
+                        goal: 'Learn basic greetings'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success && data.audioUrl) {
+                        resultDiv.innerHTML = `
+                            ✅ SUCCESS: TTS generated successfully!
+                            🎵 Audio URL: ${data.audioUrl}
+                            📝 Text: ${data.text}
+                            🤖 Model: ${data.model || 'Unknown'}
+                            🔊 Audio Player:
+                        `;
+                        
+                        const audio = document.createElement('audio');
+                        audio.controls = true;
+                        audio.src = data.audioUrl;
+                        resultDiv.appendChild(audio);
+                        resultDiv.className = 'result success audio-result';
+                    } else {
+                        resultDiv.innerHTML = `❌ TTS failed: ${JSON.stringify(data, null, 2)}`;
+                        resultDiv.className = 'result error';
+                    }
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `❌ HTTP Error ${response.status}: ${errorText}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testArabicContent() {
+            const resultDiv = document.getElementById('arabicResult');
+            resultDiv.innerHTML = '🔄 Generating enhanced Arabic content...';
+            resultDiv.className = 'result';
+
+            try {
+                const response = await fetch(WORKERS.gateway, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'generate-vocabulary',
+                        lesson: 'Basic Greetings',
+                        goal: 'Learn essential Arabic greetings'
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        resultDiv.innerHTML = `
+                            ✅ SUCCESS: Enhanced Arabic content generated!
+                            📚 Lesson: ${data.lesson}
+                            🎯 Goal: ${data.goal}
+                            📊 Content Type: ${data.action}
+                            📝 Generated Data:
+                        `;
+                        
+                        const contentDiv = document.createElement('div');
+                        contentDiv.innerHTML = JSON.stringify(data.data, null, 2);
+                        resultDiv.appendChild(contentDiv);
+                        resultDiv.className = 'result success';
+                    } else {
+                        resultDiv.innerHTML = `❌ Content generation failed: ${JSON.stringify(data, null, 2)}`;
+                        resultDiv.className = 'result error';
+                    }
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `❌ HTTP Error ${response.status}: ${errorText}`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testWorkerStatus() {
+            const resultDiv = document.getElementById('statusResult');
+            resultDiv.innerHTML = '🔄 Checking worker status...';
+            resultDiv.className = 'result';
+
+            try {
+                const statusChecks = await Promise.allSettled([
+                    fetch(WORKERS.gateway, { method: 'GET' }),
+                    fetch(WORKERS.image, { method: 'GET' }),
+                    fetch(WORKERS.tts, { method: 'GET' })
+                ]);
+
+                let statusReport = '📊 Worker Status Report:\n\n';
+                
+                statusChecks.forEach((result, index) => {
+                    const workerNames = ['Gateway Worker', 'Image Worker', 'TTS Worker'];
+                    const workerUrls = Object.values(WORKERS);
+                    
+                    if (result.status === 'fulfilled' && result.value.ok) {
+                        statusReport += `✅ ${workerNames[index]}: ONLINE\n`;
+                        statusReport += `   URL: ${workerUrls[index]}\n`;
+                    } else {
+                        statusReport += `❌ ${workerNames[index]}: OFFLINE\n`;
+                        statusReport += `   URL: ${workerUrls[index]}\n`;
+                        if (result.status === 'rejected') {
+                            statusReport += `   Error: ${result.reason.message}\n`;
+                        }
+                    }
+                    statusReport += '\n';
+                });
+
+                resultDiv.innerHTML = statusReport;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `❌ Error checking status: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testWorkerStatus();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

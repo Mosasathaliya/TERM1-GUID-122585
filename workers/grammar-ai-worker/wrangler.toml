@@ -1,0 +1,6 @@
+name = "grammar-ai-worker"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[ai]
+binding = "AI"

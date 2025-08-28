@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Dalil Deployment Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .step {
+            background: #f9f9f9;
+            border-left: 4px solid #3498db;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .btn {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Al-Dalil Deployment Guide</h1>
+    
+    <div class="step">
+        <h2>1. Create a GitHub Repository</h2>
+        <p>Go to <a href="https://github.com/new" target="_blank">GitHub</a> and create a new repository named "al-dalil-app" (or your preferred name).</p>
+    </div>
+
+    <div class="step">
+        <h2>2. Initialize Git Repository</h2>
+        <p>Open a terminal in your project folder and run these commands:</p>
+        <pre><code>git init
+git add .
+git commit -m "Initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR-USERNAME/al-dalil-app.git
+git push -u origin main</code></pre>
+        <p>Replace <code>YOUR-USERNAME</code> with your GitHub username.</p>
+    </div>
+
+    <div class="step">
+        <h2>3. Enable GitHub Pages</h2>
+        <ol>
+            <li>Go to your repository on GitHub</li>
+            <li>Click on "Settings"</li>
+            <li>Select "Pages" from the left sidebar</li>
+            <li>Under "Source", select "Deploy from a branch"</li>
+            <li>Under "Branch", select "main" and "/docs" as the folder</li>
+            <li>Click "Save"</li>
+        </ol>
+    </div>
+
+    <div class="step">
+        <h2>4. Access Your Site</h2>
+        <p>Your site will be available at:</p>
+        <p><code>https://YOUR-USERNAME.github.io/al-dalil-app/</code></p>
+        <p>It may take a few minutes for the site to be available after you push your changes.</p>
+    </div>
+
+    <div class="step">
+        <h2>Need Help?</h2>
+        <p>If you encounter any issues, please refer to the <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site" target="_blank">GitHub Pages documentation</a>.</p>
+    </div>
+</body>
+</html>

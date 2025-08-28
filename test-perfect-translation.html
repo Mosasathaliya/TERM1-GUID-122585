@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfect Translation Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #dee2e6; border-radius: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        button { padding: 12px 24px; margin: 5px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        button:hover { background: #218838; transform: translateY(-1px); }
+        .result { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; border-left: 4px solid #28a745; }
+        .error { color: #dc3545; border-left-color: #dc3545; }
+        .success { color: #28a745; border-left-color: #28a745; }
+        .arabic { direction: rtl; text-align: right; font-family: 'Arial', sans-serif; font-size: 18px; margin: 10px 0; padding: 15px; background: #e8f5e8; border-radius: 6px; border: 1px solid #c3e6c3; }
+        .english { font-size: 16px; color: #495057; margin: 8px 0; font-weight: bold; }
+        h1 { color: #155724; text-align: center; }
+        h3 { color: #155724; border-bottom: 2px solid #28a745; padding-bottom: 8px; }
+        .status { font-weight: bold; margin-bottom: 15px; font-size: 16px; }
+        .quality-check { background: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .test-all-btn { background: #007bff; font-size: 16px; padding: 15px 30px; }
+        .test-all-btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>🎯 Perfect Translation Test</h1>
+    <p style="text-align: center; color: #666; font-size: 16px;">Testing the ULTRA ROBUST translation with strict quality checks</p>
+
+    <div class="test-section">
+        <h3>🚀 Test All Translations at Once</h3>
+        <button class="test-all-btn" onclick="testAllTranslations()">Test All Translations</button>
+        <div id="test-all-result" class="result">Click button to test all translations...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 1: Simple Words</h3>
+        <button onclick="testTranslation('Hello')">Test "Hello"</button>
+        <button onclick="testTranslation('Good')">Test "Good"</button>
+        <button onclick="testTranslation('You')">Test "You"</button>
+        <div id="result-simple" class="result">Click button to test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 2: Common Phrases</h3>
+        <button onclick="testTranslation('Good morning')">Test "Good morning"</button>
+        <button onclick="testTranslation('Thank you')">Test "Thank you"</button>
+        <button onclick="testTranslation('How are you')">Test "How are you"</button>
+        <div id="result-phrases" class="result">Click button to test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 3: Adjectives & Nouns</h3>
+        <button onclick="testTranslation('Beautiful')">Test "Beautiful"</button>
+        <button onclick="testTranslation('Computer')">Test "Computer"</button>
+        <button onclick="testTranslation('Learning')">Test "Learning"</button>
+        <div id="result-adj-nouns" class="result">Click button to test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test 4: Edge Cases</h3>
+        <button onclick="testTranslation('Y')">Test "Y" (Single Letter)</button>
+        <button onclick="testTranslation('A')">Test "A" (Single Letter)</button>
+        <button onclick="testTranslation('I')">Test "I" (Single Letter)</button>
+        <div id="result-edge" class="result">Click button to test...</div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://al-dalil-ai-worker.speedofmastry.workers.dev';
+        const testWords = [
+            'Hello', 'Good', 'You', 'Good morning', 'Thank you', 'How are you',
+            'Beautiful', 'Computer', 'Learning', 'Y', 'A', 'I'
+        ];
+
+        async function testTranslation(text) {
+            const resultId = `result-${text.toLowerCase().replace(/\s+/g, '')}`;
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = `<div class="status">🔄 Translating "${text}" to Arabic...</div>`;
+
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/translate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: text,
+                        targetLang: 'ar'
+                    })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.result;
+                    
+                    // Quality checks
+                    const qualityChecks = performQualityChecks(text, result);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="status">✅ Translation completed successfully!</div>
+                        
+                        <div class="english"><strong>English:</strong> ${text}</div>
+                        
+                        <h4>🌐 Translated Text:</h4>
+                        <div class="arabic">${result.translated_text}</div>
+                        
+                        <h4>📚 Word Meaning:</h4>
+                        <div class="arabic">${result.word_meaning}</div>
+                        
+                        <div class="quality-check">
+                            <strong>🔍 Quality Checks:</strong>
+                            ${qualityChecks.map(check => `<div>${check}</div>`).join('')}
+                        </div>
+                        
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                            <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ Error: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+
+        function performQualityChecks(englishText, result) {
+            const checks = [];
+            
+            // Check 1: Translation contains Arabic
+            if (/[\u0600-\u06FF]/.test(result.translated_text)) {
+                checks.push('✅ Translation contains Arabic characters');
+            } else {
+                checks.push('❌ Translation missing Arabic characters');
+            }
+            
+            // Check 2: Translation length is reasonable
+            if (result.translated_text.length > 0 && result.translated_text.length < 100) {
+                checks.push('✅ Translation length is reasonable');
+            } else {
+                checks.push('❌ Translation length is too long or empty');
+            }
+            
+            // Check 3: No question marks in translation
+            if (!result.translated_text.includes('؟')) {
+                checks.push('✅ Translation has no question marks');
+            } else {
+                checks.push('❌ Translation contains question marks');
+            }
+            
+            // Check 4: Word meaning starts correctly
+            if (result.word_meaning.startsWith('معنى الكلمة:')) {
+                checks.push('✅ Word meaning starts correctly');
+            } else {
+                checks.push('❌ Word meaning format is incorrect');
+            }
+            
+            // Check 5: Word meaning contains Arabic
+            if (/[\u0600-\u06FF]/.test(result.word_meaning)) {
+                checks.push('✅ Word meaning contains Arabic');
+            } else {
+                checks.push('❌ Word meaning missing Arabic');
+            }
+            
+            // Check 6: No English word in meaning
+            if (!result.word_meaning.includes(englishText)) {
+                checks.push('✅ Word meaning doesn\'t contain English word');
+            } else {
+                checks.push('❌ Word meaning contains English word');
+            }
+            
+            return checks;
+        }
+
+        async function testAllTranslations() {
+            const resultDiv = document.getElementById('test-all-result');
+            resultDiv.innerHTML = '<div class="status">🚀 Testing all translations...</div>';
+            
+            const results = [];
+            
+            for (const word of testWords) {
+                try {
+                    const response = await fetch(`${WORKER_URL}/ai/translate`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            text: word,
+                            targetLang: 'ar'
+                        })
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        const qualityChecks = performQualityChecks(word, data.result);
+                        const passedChecks = qualityChecks.filter(check => check.includes('✅')).length;
+                        const totalChecks = qualityChecks.length;
+                        
+                        results.push({
+                            word: word,
+                            success: true,
+                            translation: data.result.translated_text,
+                            meaning: data.result.word_meaning,
+                            quality: `${passedChecks}/${totalChecks}`
+                        });
+                    } else {
+                        results.push({
+                            word: word,
+                            success: false,
+                            error: data.error
+                        });
+                    }
+                } catch (error) {
+                    results.push({
+                        word: word,
+                        success: false,
+                        error: error.message
+                    });
+                }
+                
+                // Small delay between requests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            // Display results
+            const successCount = results.filter(r => r.success).length;
+            const totalCount = results.length;
+            
+            let resultsHtml = `<div class="status">🎯 Test Results: ${successCount}/${totalCount} successful</div>`;
+            
+            results.forEach(result => {
+                if (result.success) {
+                    resultsHtml += `
+                        <div style="margin: 10px 0; padding: 10px; background: #d4edda; border-radius: 5px;">
+                            <strong>${result.word}</strong> - Quality: ${result.quality}
+                            <br>Translation: ${result.translation}
+                            <br>Meaning: ${result.meaning}
+                        </div>
+                    `;
+                } else {
+                    resultsHtml += `
+                        <div style="margin: 10px 0; padding: 10px; background: #f8d7da; border-radius: 5px;">
+                            <strong>${result.word}</strong> - ❌ Failed: ${result.error}
+                        </div>
+                    `;
+                }
+            });
+            
+            resultDiv.innerHTML = resultsHtml;
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testTranslation('Hello');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Worker Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 3px; white-space: pre-wrap; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>AI Worker Test Page</h1>
+    
+    <div class="test-section">
+        <h3>1. Test Worker Status</h3>
+        <button onclick="testWorkerStatus()">Test Worker Status</button>
+        <div id="status-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>2. Test AI Models</h3>
+        <button onclick="testAIModels()">Test AI Models</button>
+        <div id="ai-test-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>3. Test Translation</h3>
+        <button onclick="testTranslation()">Test Translation (Hello → Arabic)</button>
+        <div id="translation-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>4. Test Text Generation</h3>
+        <button onclick="testTextGeneration()">Test Text Generation</button>
+        <div id="text-result" class="result"></div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://al-dalil-ai-worker.speedofmastry.workers.dev';
+
+        async function testWorkerStatus() {
+            const resultDiv = document.getElementById('status-result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch(WORKER_URL);
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ Worker is working!</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testAIModels() {
+            const resultDiv = document.getElementById('ai-test-result');
+            resultDiv.innerHTML = 'Testing AI models...';
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/test`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ AI Test completed!</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testTranslation() {
+            const resultDiv = document.getElementById('translation-result');
+            resultDiv.innerHTML = 'Translating "hello" to Arabic...';
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/translate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        text: 'hello',
+                        targetLang: 'ar'
+                    })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ Translation completed!</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+
+        async function testTextGeneration() {
+            const resultDiv = document.getElementById('text-result');
+            resultDiv.innerHTML = 'Generating text...';
+            
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        prompt: 'Say hello in a friendly way'
+                    })
+                });
+                const data = await response.json();
+                resultDiv.innerHTML = `<span class="success">✅ Text generated!</span>\n\n${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="error">❌ Error: ${error.message}</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

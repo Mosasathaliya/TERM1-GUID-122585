@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive AI System Test - FIXED</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #dee2e6; border-radius: 10px; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        button { padding: 12px 24px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        button:hover { background: #0056b3; transform: translateY(-1px); }
+        .result { margin: 15px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; white-space: pre-wrap; border-left: 4px solid #007bff; }
+        .error { color: #dc3545; border-left-color: #dc3545; }
+        .success { color: #28a745; border-left-color: #28a745; }
+        .warning { color: #ffc107; border-left-color: #ffc107; }
+        .status { font-weight: bold; margin-bottom: 15px; font-size: 16px; }
+        .test-all-btn { background: #28a745; font-size: 16px; padding: 15px 30px; }
+        .test-all-btn:hover { background: #218838; }
+        .endpoint-status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-left: 10px; }
+        .status-success { background: #d4edda; color: #155724; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        .status-warning { background: #fff3cd; color: #856404; }
+        .progress-bar { width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #28a745, #20c997); transition: width 0.3s ease; }
+        .debug-info { background: #f8f9fa; padding: 10px; border-radius: 6px; margin: 10px 0; font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Comprehensive AI System Test - FIXED</h1>
+    <p style="text-align: center; color: #666; font-size: 16px;">Testing all AI endpoints with improved image and audio handling</p>
+
+    <div class="test-section">
+        <h3>🚀 Test All AI Endpoints</h3>
+        <button class="test-all-btn" onclick="testAllEndpoints()">Run Complete System Test</button>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+        <div id="test-all-result" class="result">Click button to run comprehensive test...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>📝 Text Generation Tests</h3>
+        <button onclick="testTextGeneration('Hello, how are you?')">Test Basic Text</button>
+        <button onclick="testTextGeneration('Write a short story about learning English')">Test Story Generation</button>
+        <button onclick="testTextGeneration('Explain quantum computing in simple terms')">Test Complex Topic</button>
+        <div id="result-text" class="result">Click button to test text generation...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>🌐 Translation Tests</h3>
+        <button onclick="testTranslation('Hello')">Test "Hello"</button>
+        <button onclick="testTranslation('Good morning')">Test "Good morning"</button>
+        <button onclick="testTranslation('Learning')">Test "Learning"</button>
+        <div id="result-translation" class="result">Click button to test translation...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>🎨 Image Generation Tests</h3>
+        <button onclick="testImageGeneration('A cat reading a book')">Test Simple Image</button>
+        <button onclick="testImageGeneration('Beautiful sunset over mountains')">Test Scenic Image</button>
+        <button onclick="testImageGeneration('Modern classroom with computers')">Test Educational Image</button>
+        <div id="result-image" class="result">Click button to test image generation...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔊 Text-to-Speech Tests</h3>
+        <button onclick="testTTS('Hello, welcome to English learning')">Test English TTS</button>
+        <button onclick="testTTS('مرحبا، أهلا وسهلا بتعلم اللغة الإنجليزية')">Test Arabic TTS</button>
+        <button onclick="testTTS('Learning is fun and exciting')">Test Long Text TTS</button>
+        <div id="result-tts" class="result">Click button to test TTS...</div>
+    </div>
+
+    <div class="test-section">
+        <h3>🔧 System Health Check</h3>
+        <button onclick="checkSystemHealth()">Check System Health</button>
+        <div id="result-health" class="result">Click button to check system health...</div>
+    </div>
+
+    <script>
+        const WORKER_URL = 'https://al-dalil-ai-worker.speedofmastry.workers.dev';
+        let testResults = {};
+
+        // Improved base64 to blob conversion
+        function base64ToBlob(base64, mimeType = 'image/png') {
+            try {
+                // Remove data URL prefix if present
+                const base64Data = base64.replace(/^data:[^;]+;base64,/, '');
+                
+                // Decode base64 to binary
+                const binaryString = atob(base64Data);
+                const bytes = new Uint8Array(binaryString.length);
+                
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                return new Blob([bytes], { type: mimeType });
+            } catch (error) {
+                console.error('Base64 to blob conversion error:', error);
+                throw new Error(`Failed to convert base64 to blob: ${error.message}`);
+            }
+        }
+
+        // Test all endpoints comprehensively
+        async function testAllEndpoints() {
+            const resultDiv = document.getElementById('test-all-result');
+            const progressFill = document.getElementById('progress-fill');
+            
+            resultDiv.innerHTML = '<div class="status">🚀 Starting comprehensive AI system test...</div>';
+            
+            const endpoints = [
+                { name: 'System Health', test: checkSystemHealth },
+                { name: 'Text Generation', test: () => testTextGeneration('Hello, test message') },
+                { name: 'Translation', test: () => testTranslation('Hello') },
+                { name: 'Image Generation', test: () => testImageGeneration('A simple test image') },
+                { name: 'Text-to-Speech', test: () => testTTS('Test message') }
+            ];
+
+            let completed = 0;
+            const results = [];
+
+            for (const endpoint of endpoints) {
+                try {
+                    resultDiv.innerHTML += `<div>🔄 Testing ${endpoint.name}...</div>`;
+                    
+                    if (endpoint.name === 'System Health') {
+                        await endpoint.test();
+                    } else {
+                        await endpoint.test();
+                    }
+                    
+                    completed++;
+                    const progress = (completed / endpoints.length) * 100;
+                    progressFill.style.width = `${progress}%`;
+                    
+                    results.push({ name: endpoint.name, status: 'success' });
+                    resultDiv.innerHTML += `<div>✅ ${endpoint.name} completed</div>`;
+                    
+                } catch (error) {
+                    completed++;
+                    const progress = (completed / endpoints.length) * 100;
+                    progressFill.style.width = `${progress}%`;
+                    
+                    results.push({ name: endpoint.name, status: 'error', error: error.message });
+                    resultDiv.innerHTML += `<div>❌ ${endpoint.name} failed: ${error.message}</div>`;
+                }
+                
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            // Final results summary
+            const successCount = results.filter(r => r.status === 'success').length;
+            const totalCount = results.length;
+            
+            resultDiv.innerHTML += `
+                <div class="status" style="margin-top: 20px; padding: 15px; background: ${successCount === totalCount ? '#d4edda' : successCount > totalCount/2 ? '#fff3cd' : '#f8d7da'}; border-radius: 8px;">
+                    🎯 Test Results: ${successCount}/${totalCount} endpoints working correctly
+                    ${successCount === totalCount ? '✅ All systems operational!' : successCount > totalCount/2 ? '⚠️ Some issues detected' : '❌ Multiple system failures'}
+                </div>
+            `;
+        }
+
+        // Text generation test
+        async function testTextGeneration(prompt) {
+            const resultDiv = document.getElementById('result-text');
+            resultDiv.innerHTML = `<div class="status">🔄 Generating text: "${prompt}"</div>`;
+
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/text`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Text generation successful!</div>
+                        <div><strong>Prompt:</strong> ${prompt}</div>
+                        <div><strong>Generated Text:</strong></div>
+                        <div style="background: #e8f5e8; padding: 15px; border-radius: 6px; margin: 10px 0;">${data.result}</div>
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                            <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ Text generation failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+
+        // Translation test
+        async function testTranslation(text) {
+            const resultDiv = document.getElementById('result-translation');
+            resultDiv.innerHTML = `<div class="status">🔄 Translating: "${text}"</div>`;
+
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/translate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, targetLang: 'ar' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const result = data.result;
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ Translation successful!</div>
+                        <div><strong>English:</strong> ${text}</div>
+                        <div><strong>Arabic Translation:</strong> ${result.translated_text}</div>
+                        <div><strong>Word Meaning:</strong> ${result.word_meaning}</div>
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                            <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ Translation failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+
+        // Fixed image generation test
+        async function testImageGeneration(prompt) {
+            const resultDiv = document.getElementById('result-image');
+            resultDiv.innerHTML = `<div class="status">🔄 Generating image: "${prompt}"</div>`;
+
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/image`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.result) {
+                    try {
+                        // Validate base64 data
+                        const base64Data = data.result;
+                        if (typeof base64Data !== 'string' || base64Data.length < 100) {
+                            throw new Error('Invalid or too short base64 data received');
+                        }
+
+                        // Create blob and URL
+                        const blob = base64ToBlob(base64Data, 'image/png');
+                        const imageUrl = URL.createObjectURL(blob);
+                        
+                        resultDiv.innerHTML = `
+                            <div class="status success">✅ Image generation successful!</div>
+                            <div><strong>Prompt:</strong> ${prompt}</div>
+                            <div><strong>Image Data:</strong> Base64 encoded (${base64Data.length} characters)</div>
+                            <div style="background: #e8f5e8; padding: 15px; border-radius: 6px; margin: 10px 0;">
+                                <img src="${imageUrl}" alt="Generated Image" style="max-width: 100%; height: auto; border-radius: 8px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                                <div style="display: none; color: #dc3545; font-weight: bold;">⚠️ Image failed to load. Check console for details.</div>
+                            </div>
+                            <div class="debug-info">
+                                <strong>Debug Info:</strong><br>
+                                Base64 Length: ${base64Data.length}<br>
+                                Blob Size: ${blob.size} bytes<br>
+                                Blob Type: ${blob.type}<br>
+                                Image URL: ${imageUrl.substring(0, 50)}...
+                            </div>
+                            <details style="margin-top: 15px;">
+                                <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                                <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify({...data, result: base64Data.substring(0, 100) + '...'}, null, 2)}</pre>
+                            </details>
+                        `;
+                    } catch (blobError) {
+                        resultDiv.innerHTML = `
+                            <div class="status warning">⚠️ Image generated but failed to display</div>
+                            <div><strong>Prompt:</strong> ${prompt}</div>
+                            <div><strong>Error:</strong> ${blobError.message}</div>
+                            <div class="debug-info">
+                                <strong>Raw Data:</strong><br>
+                                Type: ${typeof data.result}<br>
+                                Length: ${data.result ? data.result.length : 'null'}<br>
+                                First 100 chars: ${data.result ? data.result.substring(0, 100) : 'null'}
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ Image generation failed: ${data.error || 'No result data'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+
+        // Fixed TTS test
+        async function testTTS(text) {
+            const resultDiv = document.getElementById('result-tts');
+            resultDiv.innerHTML = `<div class="status">🔄 Generating speech: "${text}"</div>`;
+
+            try {
+                const response = await fetch(`${WORKER_URL}/ai/tts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: text, lang: 'en' })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success && data.result) {
+                    try {
+                        // Validate base64 data
+                        const base64Data = data.result;
+                        if (typeof base64Data !== 'string' || base64Data.length < 100) {
+                            throw new Error('Invalid or too short base64 data received');
+                        }
+
+                        // Create audio blob and URL
+                        const audioBlob = base64ToBlob(base64Data, 'audio/wav');
+                        const audioUrl = URL.createObjectURL(audioBlob);
+                        
+                        resultDiv.innerHTML = `
+                            <div class="status success">✅ TTS generation successful!</div>
+                            <div><strong>Text:</strong> ${text}</div>
+                            <div><strong>Audio Data:</strong> Base64 encoded (${base64Data.length} characters)</div>
+                            <div><strong>Audio Blob:</strong> ${audioBlob.size} bytes, ${audioBlob.type}</div>
+                            <button onclick="playAudio('${audioUrl}')" style="background: #28a745; margin: 10px 0;">🔊 Play Audio</button>
+                            <div class="debug-info">
+                                <strong>Debug Info:</strong><br>
+                                Base64 Length: ${base64Data.length}<br>
+                                Blob Size: ${audioBlob.size} bytes<br>
+                                Blob Type: ${audioBlob.type}<br>
+                                Audio URL: ${audioUrl.substring(0, 50)}...
+                            </div>
+                            <details style="margin-top: 15px;">
+                                <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                                <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify({...data, result: base64Data.substring(0, 100) + '...'}, null, 2)}</pre>
+                            </details>
+                        `;
+                    } catch (blobError) {
+                        resultDiv.innerHTML = `
+                            <div class="status warning">⚠️ Audio generated but failed to create blob</div>
+                            <div><strong>Text:</strong> ${text}</div>
+                            <div><strong>Error:</strong> ${blobError.message}</div>
+                            <div class="debug-info">
+                                <strong>Raw Data:</strong><br>
+                                Type: ${typeof data.result}<br>
+                                Length: ${data.result ? data.result.length : 'null'}<br>
+                                First 100 chars: ${data.result ? data.result.substring(0, 100) : 'null'}
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ TTS generation failed: ${data.error || 'No result data'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ Network Error: ${error.message}</div>`;
+            }
+        }
+
+        // Fixed audio playback function
+        function playAudio(audioUrl) {
+            try {
+                console.log('Playing audio from URL:', audioUrl);
+                
+                // Create new audio element
+                const audio = new Audio();
+                
+                // Set up event listeners
+                audio.addEventListener('loadstart', () => console.log('Audio loading started'));
+                audio.addEventListener('canplay', () => console.log('Audio can play'));
+                audio.addEventListener('playing', () => console.log('Audio playing'));
+                audio.addEventListener('ended', () => console.log('Audio ended'));
+                audio.addEventListener('error', (e) => console.error('Audio error:', e));
+                
+                // Set source and play
+                audio.src = audioUrl;
+                audio.volume = 0.7;
+                
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise
+                        .then(() => console.log('Audio playback started successfully'))
+                        .catch(error => {
+                            console.error('Audio playback failed:', error);
+                            alert('Audio playback failed: ' + error.message);
+                        });
+                }
+            } catch (error) {
+                console.error('Error in playAudio:', error);
+                alert('Error playing audio: ' + error.message);
+            }
+        }
+
+        // System health check
+        async function checkSystemHealth() {
+            const resultDiv = document.getElementById('result-health');
+            resultDiv.innerHTML = '<div class="status">🔍 Checking system health...</div>';
+
+            try {
+                // Test root endpoint
+                const rootResponse = await fetch(`${WORKER_URL}/`);
+                const rootData = await rootResponse.json();
+                
+                if (rootData.status === 'active') {
+                    resultDiv.innerHTML = `
+                        <div class="status success">✅ System Health Check Passed!</div>
+                        <div><strong>Status:</strong> ${rootData.status}</div>
+                        <div><strong>Version:</strong> ${rootData.version}</div>
+                        <div><strong>Message:</strong> ${rootData.message}</div>
+                        <div><strong>Available Endpoints:</strong></div>
+                        <ul style="background: #e8f5e8; padding: 15px; border-radius: 6px; margin: 10px 0;">
+                            ${rootData.endpoints.map(endpoint => `<li>${endpoint}</li>`).join('')}
+                        </ul>
+                        <details style="margin-top: 15px;">
+                            <summary style="cursor: pointer; color: #666;">🔍 View Raw Response</summary>
+                            <pre style="background: #f1f3f4; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px;">${JSON.stringify(rootData, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="status error">❌ System health check failed: ${rootData.status}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="status error">❌ System health check failed: ${error.message}</div>`;
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                checkSystemHealth();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

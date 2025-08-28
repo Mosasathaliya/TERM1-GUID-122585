@@ -1,0 +1,45 @@
+name = "al-dalil-ai-worker"
+main = "src/index.ts"
+compatibility_date = "2024-08-28"
+
+[ai]
+binding = "AI"
+
+# Configure specific models for different tasks
+[ai.models]
+# Main lesson generation model (English-Arabic)
+[[ai.models]]
+name = "@meta/llama-3.3-70b-instruct-fp8-fast"
+
+# For Arabic content and translation
+[[ai.models]]
+name = "@meta/llama-3.2-11b-vision-instruct"
+
+# For math and logic problems
+[[ai.models]]
+name = "@deepseek-ai/deepseek-math-7b-instruct"
+
+# For image generation for lessons
+[[ai.models]]
+name = "@stabilityai/stable-diffusion-xl-base-1.0"
+
+# For speech-to-text (pronunciation practice)
+[[ai.models]]
+name = "@openai/whisper-large-v3-turbo"
+
+# For text-to-speech
+[[ai.models]]
+name = "@myshell-ai/melotts"
+
+# For content safety and moderation
+[[ai.models]]
+name = "@meta/llama-guard-3-8b"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"
+
+[env.production]
+# Add any production-specific configurations here
